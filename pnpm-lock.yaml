@@ -47,6 +47,9 @@ importers:
       rss-parser:
         specifier: ^3.13.0
         version: 3.13.0
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
     devDependencies:
       '@types/cors':
         specifier: ^2.8.17

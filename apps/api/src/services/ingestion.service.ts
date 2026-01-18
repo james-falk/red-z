@@ -129,8 +129,8 @@ export class IngestionService {
           } else if ((item as any).mediaThumbnail?.$ || (item as any).mediaThumbnail) {
             const thumb = (item as any).mediaThumbnail;
             thumbnailUrl = thumb.$?.url || thumb.url || thumb;
-          } else if (item.itunes?.image) {
-            thumbnailUrl = item.itunes.image;
+          } else if ((item as any).itunes?.image) {
+            thumbnailUrl = (item as any).itunes.image;
           }
 
           // Create content
@@ -144,7 +144,7 @@ export class IngestionService {
               publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
               sourceId: source.id,
               metadata: {
-                author: item.creator || item.author,
+                author: item.creator || (item as any).author,
                 categories: item.categories || []
               }
             }
