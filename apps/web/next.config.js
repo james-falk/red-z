@@ -6,7 +6,9 @@ const nextConfig = {
   },
   transpilePackages: ['@fantasy-red-zone/shared'],
   output: 'standalone',
-  serverExternalPackages: ['@node-rs/argon2'],
+  experimental: {
+    serverComponentsExternalPackages: ['@node-rs/argon2'],
+  },
 }
 
 module.exports = nextConfig
