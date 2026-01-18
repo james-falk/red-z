@@ -1,4 +1,4 @@
-import { hash, verify, argon2id } from '@node-rs/argon2';
+import { hash, verify, Algorithm } from '@node-rs/argon2';
 import crypto from 'crypto';
 
 /**
@@ -15,7 +15,7 @@ import crypto from 'crypto';
  */
 
 const ARGON2_OPTIONS = {
-  algorithm: argon2id,
+  algorithm: Algorithm.Argon2id,
   memoryCost: 65536, // 64 MB
   timeCost: 3,
   parallelism: 4,
