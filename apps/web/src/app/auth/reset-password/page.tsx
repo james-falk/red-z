@@ -5,6 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { passwordSchema } from '@/lib/auth/validation';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 /**
  * Reset Password Page
  * 

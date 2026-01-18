@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { validateVerificationToken } from '@/lib/auth/email';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/auth/verify-email?token=xxx
  * 
