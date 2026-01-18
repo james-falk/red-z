@@ -12,9 +12,9 @@
   "dependencies": {
     "@fantasy-red-zone/shared": "workspace:*",
     "@next-auth/prisma-adapter": "^1.0.7",
+    "@node-rs/argon2": "^2.0.2",
     "@prisma/client": "^5.22.0",
     "@types/nodemailer": "^7.0.5",
-    "argon2": "^0.44.0",
     "axios": "^1.6.5",
     "jsonwebtoken": "^9.0.2",
     "nanoid": "^5.1.6",

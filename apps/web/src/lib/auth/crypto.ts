@@ -1,4 +1,4 @@
-import argon2 from 'argon2';
+import { hash, verify, argon2id } from '@node-rs/argon2';
 import crypto from 'crypto';
 
 /**
@@ -15,7 +15,7 @@ import crypto from 'crypto';
  */
 
 const ARGON2_OPTIONS = {
-  type: argon2.argon2id,
+  algorithm: argon2id,
   memoryCost: 65536, // 64 MB
   timeCost: 3,
   parallelism: 4,
@@ -27,7 +27,7 @@ const ARGON2_OPTIONS = {
  * @returns Promise<string> - Hashed password (includes algorithm params + salt)
  */
 export async function hashPassword(password: string): Promise<string> {
-  return argon2.hash(password, ARGON2_OPTIONS);
+  return hash(password, ARGON2_OPTIONS);
 }
 
 /**
@@ -40,9 +40,9 @@ export async function hashPassword(password: string): Promise<string> {
  * @param password - Plain text password to verify
  * @returns Promise<boolean> - True if password matches
  */
-export async function verifyPassword(hash: string, password: string): Promise<boolean> {
+export async function verifyPassword(storedHash: string, password: string): Promise<boolean> {
   try {
-    return await argon2.verify(hash, password);
+    return await verify(storedHash, password);
   } catch (error) {
     // Invalid hash format or verification error
     return false;
