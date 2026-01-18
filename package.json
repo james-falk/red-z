@@ -1,0 +1,17 @@
+{
+  "name": "fantasy-red-zone",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter \"./apps/**\" dev",
+    "build": "pnpm --filter \"./packages/**\" build && pnpm --filter \"./apps/**\" build",
+    "db:generate": "pnpm --filter api db:generate",
+    "db:push": "pnpm --filter api db:push",
+    "db:migrate": "pnpm --filter api db:migrate",
+    "db:seed": "pnpm --filter api db:seed",
+    "lint": "pnpm --filter \"./apps/**\" --filter \"./packages/**\" lint"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

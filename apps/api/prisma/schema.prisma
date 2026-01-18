@@ -1,0 +1,245 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          UserRole  @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts              Account[]
+  sessions              Session[]
+  favoriteSource        FavoriteSource[]
+  savedContent          SavedContent[]
+  feeds                 Feed[]
+  sleeperAccount        UserSleeperAccount?
+  sleeperLeagues        SleeperLeague[]
+  sleeperRosters        SleeperRoster[]
+
+  @@index([email])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model Source {
+  id              String       @id @default(cuid())
+  name            String
+  type            SourceType
+  feedUrl         String       @unique
+  websiteUrl      String?
+  logoUrl         String?
+  description     String?      @db.Text
+  isActive        Boolean      @default(true)
+  lastFetchedAt   DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  content         Content[]
+  favoriteSource  FavoriteSource[]
+  feedSources     FeedSource[]
+
+  @@index([isActive])
+  @@index([type])
+}
+
+enum SourceType {
+  RSS
+  YOUTUBE
+  PODCAST
+}
+
+model Content {
+  id           String      @id @default(cuid())
+  title        String
+  description  String?     @db.Text
+  canonicalUrl String      @unique
+  thumbnailUrl String?
+  type         ContentType
+  publishedAt  DateTime
+  clickCount   Int         @default(0)
+  sourceId     String
+  metadata     Json?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  source       Source        @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  savedBy      SavedContent[]
+  featuredItem FeaturedItem?
+
+  @@index([sourceId])
+  @@index([publishedAt(sort: Desc)])
+  @@index([clickCount(sort: Desc)])
+  @@index([type])
+}
+
+enum ContentType {
+  ARTICLE
+  VIDEO
+  PODCAST
+}
+
+model FavoriteSource {
+  id        String   @id @default(cuid())
+  userId    String
+  sourceId  String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source Source @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sourceId])
+  @@index([userId])
+  @@index([sourceId])
+}
+
+model SavedContent {
+  id        String   @id @default(cuid())
+  userId    String
+  contentId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, contentId])
+  @@index([userId])
+  @@index([contentId])
+}
+
+model Feed {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sources FeedSource[]
+
+  @@index([userId])
+}
+
+model FeedSource {
+  id       String @id @default(cuid())
+  feedId   String
+  sourceId String
+
+  feed   Feed   @relation(fields: [feedId], references: [id], onDelete: Cascade)
+  source Source @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@unique([feedId, sourceId])
+  @@index([feedId])
+  @@index([sourceId])
+}
+
+model FeaturedItem {
+  id        String    @id @default(cuid())
+  contentId String    @unique
+  rank      Int
+  startDate DateTime?
+  endDate   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@index([rank])
+}
+
+model UserSleeperAccount {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  sleeperUserId    String
+  sleeperUsername  String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([sleeperUserId])
+}
+
+model SleeperLeague {
+  id        String   @id @default(cuid())
+  userId    String
+  leagueId  String
+  season    String
+  name      String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rosters SleeperRoster[]
+
+  @@unique([userId, leagueId, season])
+  @@index([userId])
+  @@index([leagueId])
+}
+
+model SleeperRoster {
+  id        String   @id @default(cuid())
+  userId    String
+  leagueId  String
+  rosterId  Int
+  players   Json
+  updatedAt DateTime @updatedAt
+
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  league SleeperLeague @relation(fields: [leagueId], references: [leagueId], onDelete: Cascade)
+
+  @@unique([leagueId, rosterId])
+  @@index([userId])
+  @@index([leagueId])
+}
