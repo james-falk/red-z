@@ -1,4 +1,4 @@
-import prisma from './db/client';
+import prisma from './client.js';
 import { SourceType, ContentType } from '@fantasy-red-zone/shared';
 
 async function seed() {
