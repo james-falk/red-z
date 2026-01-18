@@ -8,23 +8,30 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  role          UserRole  @default(USER)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                String    @id @default(cuid())
+  name              String?
+  email             String    @unique
+  emailVerified     DateTime?
+  emailVerifiedAt   DateTime?
+  image             String?
+  hashedPassword    String?
+  role              UserRole  @default(USER)
+  failedLoginCount  Int       @default(0)
+  lockedUntil       DateTime?
+  lastLoginAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  accounts              Account[]
-  sessions              Session[]
-  favoriteSource        FavoriteSource[]
-  savedContent          SavedContent[]
-  feeds                 Feed[]
-  sleeperAccount        UserSleeperAccount?
-  sleeperLeagues        SleeperLeague[]
-  sleeperRosters        SleeperRoster[]
+  accounts                 Account[]
+  sessions                 Session[]
+  favoriteSource           FavoriteSource[]
+  savedContent             SavedContent[]
+  feeds                    Feed[]
+  sleeperAccount           UserSleeperAccount?
+  sleeperLeagues           SleeperLeague[]
+  sleeperRosters           SleeperRoster[]
+  emailVerificationTokens  EmailVerificationToken[]
+  passwordResetTokens      PasswordResetToken[]
 
   @@index([email])
 }
@@ -82,6 +89,8 @@ model Source {
   description     String?      @db.Text
   isActive        Boolean      @default(true)
   lastFetchedAt   DateTime?
+  lastIngestedAt  DateTime?    // Last successful ingestion
+  lastError       String?      @db.Text  // Last error message (null if success)
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 
@@ -240,4 +249,31 @@ model SleeperRoster {
   @@unique([leagueId, rosterId])
   @@index([userId])
   @@index([leagueId])
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }

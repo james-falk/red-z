@@ -1,30 +1,17 @@
 import NextAuth from 'next-auth';
-import { authOptions, generateApiToken } from '@/lib/auth';
+import { authOptions } from '@/lib/auth';
 
-const handler = NextAuth({
-  ...authOptions,
-  callbacks: {
-    ...authOptions.callbacks,
-    async jwt({ token, user, account }) {
-      if (user) {
-        token.id = user.id;
-        token.role = (user as any).role || 'USER';
-        
-        // Generate API token
-        const apiToken = generateApiToken(user.id, user.email!, (user as any).role || 'USER');
-        token.accessToken = apiToken;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        (session.user as any).id = token.id;
-        (session.user as any).role = token.role;
-        (session as any).accessToken = token.accessToken;
-      }
-      return session;
-    },
-  },
-});
+/**
+ * Auth.js API Route Handler
+ * 
+ * SECURITY:
+ * - Handles all /api/auth/* routes
+ * - Uses authOptions with security configurations
+ * - Supports both GET and POST for Auth.js protocol
+ * - CSRF protection enabled by default
+ * - Secure cookies in production (httpOnly, secure, sameSite)
+ */
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

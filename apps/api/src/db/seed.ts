@@ -19,86 +19,83 @@ async function seed() {
     console.log(`✅ Admin user created/updated: ${adminUser.email}`);
   }
 
-  // Create example sources
+  // Create sources with working fantasy sources active
+  // Placeholders can be disabled for production if desired
   const sources = [
+    // === WORKING FANTASY SOURCES (4) ===
     {
-      name: 'ESPN Fantasy Focus',
-      type: SourceType.PODCAST,
-      feedUrl: 'https://www.espn.com/espnradio/feeds/rss/podcast.xml?id=2942325',
-      websiteUrl: 'https://www.espn.com/fantasy/football/',
-      description: 'Fantasy football analysis and insights from ESPN experts'
-    },
-    {
-      name: 'Fantasy Football Today',
-      type: SourceType.PODCAST,
-      feedUrl: 'https://www.cbssports.com/fantasy/football/podcast/rss',
-      websiteUrl: 'https://www.cbssports.com/fantasy/football/',
-      description: 'Daily fantasy football podcast from CBS Sports'
-    },
-    {
-      name: 'FantasyPros - Fantasy Football',
+      name: 'FantasySP NFL News',
       type: SourceType.RSS,
-      feedUrl: 'https://www.fantasypros.com/rss/nfl-news.xml',
-      websiteUrl: 'https://www.fantasypros.com/',
-      description: 'Latest fantasy football news and analysis'
+      feedUrl: 'https://www.fantasysp.com/rss/nfl/fantasysp/',
+      websiteUrl: 'https://www.fantasysp.com',
+      description: 'FantasySP NFL fantasy news feed',
+      isActive: true
     },
     {
-      name: 'Rotoworld Fantasy Football',
+      name: 'RotoWire Latest NFL News',
       type: SourceType.RSS,
-      feedUrl: 'https://www.nbcsports.com/feed/rss/fantasy-football',
-      websiteUrl: 'https://www.nbcsports.com/fantasy/football',
-      description: 'Fantasy football news, rankings and projections'
+      feedUrl: 'https://www.rotowire.com/rss/news.php?sport=NFL',
+      websiteUrl: 'https://www.rotowire.com',
+      description: 'RotoWire NFL player/news updates (fantasy relevant)',
+      isActive: true
     },
     {
-      name: 'The Fantasy Footballers',
-      type: SourceType.PODCAST,
-      feedUrl: 'https://feeds.megaphone.fm/fantasy-footballers-podcast',
-      websiteUrl: 'https://www.thefantasyfootballers.com/',
-      description: 'Award-winning fantasy football podcast'
+      name: 'Draft Sharks - Shark Bites',
+      type: SourceType.RSS,
+      feedUrl: 'https://www.draftsharks.com/rss/shark-bites',
+      websiteUrl: 'https://www.draftsharks.com',
+      description: 'DraftSharks quick fantasy news blurbs (Shark Bites)',
+      isActive: true
+    },
+    {
+      name: 'Draft Sharks - Injury News',
+      type: SourceType.RSS,
+      feedUrl: 'https://www.draftsharks.com/rss/injury-news',
+      websiteUrl: 'https://www.draftsharks.com',
+      description: 'DraftSharks NFL injury news feed',
+      isActive: true
+    },
+    // === PLACEHOLDER SOURCES (for testing, can disable for prod) ===
+    {
+      name: 'ESPN Top Headlines',
+      type: SourceType.RSS,
+      feedUrl: 'https://www.espn.com/espn/rss/news',
+      websiteUrl: 'https://www.espn.com',
+      description: 'ESPN sports news (placeholder for testing)',
+      isActive: true  // Set to false if you want fantasy-only content
+    },
+    {
+      name: 'Hacker News',
+      type: SourceType.RSS,
+      feedUrl: 'https://hnrss.org/frontpage',
+      websiteUrl: 'https://news.ycombinator.com',
+      description: 'HN front page (placeholder for testing)',
+      isActive: true  // Set to false if you want fantasy-only content
     }
   ];
+
+  console.log(`🌱 Seeding ${sources.length} sources (4 fantasy + 2 placeholders)...`);
 
   for (const sourceData of sources) {
-    await prisma.source.upsert({
+    const source = await prisma.source.upsert({
       where: { feedUrl: sourceData.feedUrl },
-      update: {},
+      update: {
+        name: sourceData.name,
+        description: sourceData.description,
+        isActive: sourceData.isActive
+      },
       create: sourceData
     });
+    console.log(`  ✓ ${source.name} (${source.isActive ? 'active' : 'inactive'})`);
   }
 
-  console.log(`✅ Created ${sources.length} example sources`);
-
-  // Create some example content
-  const exampleContent = [
-    {
-      title: 'Week 1 Fantasy Football Rankings',
-      description: 'Get ready for the season with our comprehensive Week 1 rankings',
-      canonicalUrl: 'https://example.com/week-1-rankings',
-      type: ContentType.ARTICLE,
-      publishedAt: new Date(),
-      sourceId: (await prisma.source.findFirst({ where: { name: 'FantasyPros - Fantasy Football' } }))!.id
-    },
-    {
-      title: 'Top 10 Sleepers for 2024',
-      description: 'Discover the hidden gems that could win you your fantasy league',
-      canonicalUrl: 'https://example.com/top-10-sleepers',
-      thumbnailUrl: 'https://via.placeholder.com/400x300',
-      type: ContentType.ARTICLE,
-      publishedAt: new Date(Date.now() - 86400000),
-      sourceId: (await prisma.source.findFirst({ where: { name: 'Rotoworld Fantasy Football' } }))!.id
-    }
-  ];
-
-  for (const content of exampleContent) {
-    await prisma.content.upsert({
-      where: { canonicalUrl: content.canonicalUrl },
-      update: {},
-      create: content
-    });
-  }
-
-  console.log(`✅ Created ${exampleContent.length} example content items`);
   console.log('🎉 Seeding complete!');
+  console.log('');
+  console.log('📝 Next steps:');
+  console.log('  1. Run ingestion: pnpm ingest (or POST /ingest/run as admin)');
+  console.log('  2. Check sources: SELECT id, name, "lastIngestedAt", "lastError" FROM "Source";');
+  console.log('  3. View content: SELECT COUNT(*) FROM "Content";');
+  console.log('  4. Add real fantasy sources via admin UI or POST /sources');
 }
 
 seed()

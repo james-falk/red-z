@@ -2,6 +2,12 @@
 
 A production-quality monorepo for Fantasy Red Zone - your ultimate fantasy football content aggregation platform. Built with Next.js, Express, Prisma, and PostgreSQL.
 
+## 📚 Documentation
+
+- **[Setup Guide](./SETUP.md)** - Detailed local development setup
+- **[Project Summary](./PROJECT_SUMMARY.md)** - Technical architecture overview
+- **[MVP Notes](./MVP_NOTES.md)** - Quick reference for key MVP details
+
 ## 🏗 Architecture
 
 - **Monorepo**: pnpm workspaces
@@ -60,21 +66,39 @@ Configure your environment variables:
 ```env
 PORT=4000
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/fantasy_red_zone?schema=public"
-JWT_SECRET="your-jwt-secret-change-in-production"
+NEXTAUTH_SECRET="your-strong-nextauth-secret-change-in-production"
 ADMIN_EMAIL="your-email@example.com"
 NODE_ENV="development"
+SLEEPER_API_URL="https://api.sleeper.app/v1"
 ```
+
+**IMPORTANT**: 
+- `NEXTAUTH_SECRET` must match the web app's `NEXTAUTH_SECRET` (used for JWT verification)
+- `ADMIN_EMAIL` will be promoted to admin role when running `pnpm db:seed`
 
 **apps/web/.env:**
 ```env
 NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-nextauth-secret-change-in-production"
+NEXTAUTH_SECRET="your-strong-nextauth-secret-change-in-production"
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/fantasy_red_zone?schema=public"
 NEXT_PUBLIC_API_URL="http://localhost:4000"
-JWT_SECRET="your-jwt-secret-change-in-production"
+
+# Email Configuration (for auth emails)
+APP_URL="http://localhost:3000"
+LOG_EMAILS="true"  # Set to false in production
+EMAIL_FROM="Fantasy Red Zone <noreply@fantasybz.com>"
+# SMTP_HOST="smtp.example.com"  # Uncomment and configure for production
+# SMTP_PORT="587"
+# SMTP_USER="your-smtp-username"
+# SMTP_PASS="your-smtp-password"
 ```
+
+**IMPORTANT**: 
+- `NEXTAUTH_SECRET` in `apps/web/.env` MUST match `NEXTAUTH_SECRET` in `apps/api/.env`
+- This shared secret is used for JWT signing and API authentication
+- Generate with: `openssl rand -base64 32`
 
 3. **Build shared package:**
 
@@ -283,18 +307,46 @@ curl http://localhost:4000/content
 
 ## 🚢 Deployment
 
-### Production Checklist
+For production deployment instructions, see **[RENDER_DEPLOYMENT.md](./RENDER_DEPLOYMENT.md)**.
 
-- [ ] Set strong `JWT_SECRET` and `NEXTAUTH_SECRET`
+### Quick Production Checklist
+
+- [ ] Set strong `NEXTAUTH_SECRET` (used for JWT signing and API auth)
 - [ ] Configure production `DATABASE_URL`
 - [ ] Set up Google OAuth with production callback URL
-- [ ] Configure `NEXTAUTH_URL` to production domain
+- [ ] Configure `NEXTAUTH_URL` and `APP_URL` to production domain
 - [ ] Set `ADMIN_EMAIL` to actual admin email
 - [ ] Review and configure CORS settings in API
 - [ ] Set up database backups
-- [ ] Configure reverse proxy (nginx/Caddy)
-- [ ] Enable HTTPS
+- [ ] Enable HTTPS (automatic on Render/Vercel)
 - [ ] Set up monitoring and logging
+- [ ] **IMPORTANT**: Replace in-memory rate limiter with Redis-based solution for multi-instance deployments
+
+### ⚠️ Rate Limiting - Production Warning
+
+**CRITICAL**: The current implementation uses an **in-memory rate limiter** (`apps/web/src/lib/auth/rate-limit.ts`) which is **NOT suitable for production environments with multiple instances**.
+
+**Why this matters:**
+- Each app instance has its own memory
+- Rate limits are NOT shared across instances
+- An attacker could bypass limits by hitting different instances
+- Example: 10 requests/IP limit becomes 10 requests × number of instances
+
+**For production, you MUST:**
+1. Replace the in-memory rate limiter with a Redis-based solution (e.g., `rate-limit-redis`, `ioredis` + custom implementation)
+2. Shared Redis instance ensures rate limits work across all app instances
+3. Update `apps/web/src/lib/auth/rate-limit.ts` to use Redis backend
+4. Configure Redis connection via environment variable
+
+**Current rate limits:**
+- Sign-up: 3 attempts per 15 minutes per IP
+- Login: 10 attempts per 15 minutes per IP
+- Forgot password: 3 attempts per 15 minutes per IP
+- Resend verification: 3 attempts per 15 minutes per IP
+
+**Additional auth protections:**
+- Account lockout: 8 failed login attempts → 15 minute lock (stored in database, multi-instance safe)
+- All rate-limited endpoints also check database lockout status
 
 ### Environment Variables
 

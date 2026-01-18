@@ -55,9 +55,13 @@ app.listen(PORT, () => {
   console.log(`✅ API server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   
-  // Start cron jobs
-  if (process.env.NODE_ENV !== 'test') {
+  // Start cron jobs (disable in production if using Render Cron Jobs)
+  // Set DISABLE_CRON=true in production to use external cron service
+  if (process.env.NODE_ENV !== 'test' && process.env.DISABLE_CRON !== 'true') {
     startCronJobs();
+    console.log('📅 Internal cron jobs enabled (set DISABLE_CRON=true to use external cron)');
+  } else if (process.env.DISABLE_CRON === 'true') {
+    console.log('⏭️  Internal cron jobs disabled (using external cron service)');
   }
 });
 
