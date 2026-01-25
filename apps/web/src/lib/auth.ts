@@ -36,11 +36,13 @@ export const authOptions: NextAuthOptions = {
      * 
      * SECURITY: Requires valid Google OAuth credentials
      * Users created via Google will have emailVerified set automatically
+     * 
+     * TEMPORARILY DISABLED: Uncomment when Google OAuth credentials are configured
      */
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+    // GoogleProvider({
+    //   clientId: process.env.GOOGLE_CLIENT_ID!,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    // }),
 
     /**
      * Credentials Provider (Email + Password)
