@@ -47,7 +47,7 @@ export class FacebookProvider implements ISocialProvider {
         throw new Error(`Facebook API error: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as any;
 
       return data.data.map((post: any) => ({
         id: post.id,
@@ -91,7 +91,7 @@ export class FacebookProvider implements ISocialProvider {
         throw new Error(`Facebook API error: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as any;
 
       return {
         username: data.username || data.id,

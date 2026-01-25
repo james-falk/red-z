@@ -55,7 +55,7 @@ export class TwitterProvider implements ISocialProvider {
         throw new Error(`Twitter API error: ${userResponse.statusText}`);
       }
 
-      const userData = await userResponse.json();
+      const userData = await userResponse.json() as any;
       const userId = userData.data.id;
 
       // Fetch user's tweets
@@ -72,7 +72,7 @@ export class TwitterProvider implements ISocialProvider {
         throw new Error(`Twitter API error: ${tweetsResponse.statusText}`);
       }
 
-      const tweetsData = await tweetsResponse.json();
+      const tweetsData = await tweetsResponse.json() as any;
 
       const mediaMap = new Map();
       if (tweetsData.includes?.media) {
@@ -145,7 +145,7 @@ export class TwitterProvider implements ISocialProvider {
         throw new Error(`Twitter API error: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as any;
 
       const userMap = new Map();
       if (data.includes?.users) {
@@ -201,7 +201,7 @@ export class TwitterProvider implements ISocialProvider {
         throw new Error(`Twitter API error: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as any;
       const user = data.data;
 
       return {

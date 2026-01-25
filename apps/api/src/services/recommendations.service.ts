@@ -50,10 +50,10 @@ class RecommendationsService {
             }
           }
         },
-        customFeeds: {
+        feeds: {
           include: {
             sources: {
-              select: { id: true }
+              select: { sourceId: true }
             }
           }
         }
@@ -67,7 +67,7 @@ class RecommendationsService {
     const recommendations: RecommendedContent[] = [];
 
     // 1. Content from followed sources (high priority)
-    const followedSourceIds = user.customFeeds.flatMap(feed => feed.sources.map(s => s.id));
+    const followedSourceIds = user.feeds.flatMap(feed => feed.sources.map(s => s.sourceId));
     if (followedSourceIds.length > 0) {
       const recentFromFollowed = await prisma.content.findMany({
         where: {
@@ -93,8 +93,8 @@ class RecommendationsService {
 
     // 2. Similar content based on saved/favorited tags
     const userContentTags = user.savedContent
-      .flatMap(sc => sc.content.contentTags.map(ct => ct.tag.id));
-    const uniqueTagIds = [...new Set(userContentTags)];
+      .flatMap((sc: any) => sc.content.contentTags.map((ct: any) => ct.tag.id));
+    const uniqueTagIds = [...new Set(userContentTags)] as string[];
 
     if (uniqueTagIds.length > 0) {
       const similarContent = await prisma.content.findMany({
@@ -133,7 +133,7 @@ class RecommendationsService {
       },
       take: Math.ceil(limit * 0.2), // 20% trending
       orderBy: [
-        { savedByUsers: { _count: 'desc' } },
+        { clickCount: 'desc' },
         { publishedAt: 'desc' }
       ],
       select: { id: true }
@@ -152,7 +152,7 @@ class RecommendationsService {
       try {
         const userContentTitles = user.savedContent
           .slice(0, 5)
-          .map(sc => sc.content.title);
+          .map((sc: any) => sc.content.title);
 
         const aiSuggestions = await aiService.generateRecommendations(
           userId,
@@ -192,7 +192,7 @@ class RecommendationsService {
       },
       take: limit,
       orderBy: [
-        { savedByUsers: { _count: 'desc' } },
+        { clickCount: 'desc' },
         { publishedAt: 'desc' }
       ],
       select: { id: true }

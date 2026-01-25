@@ -121,17 +121,14 @@ class AnalyticsService {
     const topContent = await prisma.content.findMany({
       take: 10,
       orderBy: [
-        { clickCount: 'desc' },
-        { savedByUsers: { _count: 'desc' } }
+        { clickCount: 'desc' }
       ],
       select: {
         id: true,
         title: true,
         clickCount: true,
-        _count: {
-          select: {
-            savedByUsers: true
-          }
+        savedBy: {
+          select: { id: true }
         }
       }
     });
@@ -192,7 +189,7 @@ class AnalyticsService {
           id: item.id,
           title: item.title,
           clicks: item.clickCount,
-          saves: item._count.savedByUsers
+          saves: item.savedBy.length
         }))
       },
       sources: {

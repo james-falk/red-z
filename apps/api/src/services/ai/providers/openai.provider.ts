@@ -57,7 +57,7 @@ export class OpenAIProvider implements IAIProvider {
       throw new Error(`OpenAI API error: ${error}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
     const choice = data.choices[0];
 
     return {
@@ -96,7 +96,7 @@ export class OpenAIProvider implements IAIProvider {
       throw new Error(`OpenAI API error: ${error}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
 
     return {
       embedding: data.data[0].embedding,
