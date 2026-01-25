@@ -1,103 +1,98 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { generateSecureToken, hashToken } from './crypto';
 import { prisma } from '../prisma';
 
 /**
- * Email Service Configuration
+ * Email Service Configuration (Resend)
  * 
  * SECURITY CONSIDERATIONS:
- * - Supports both SMTP (production) and LOG mode (development)
+ * - Supports both RESEND (production) and LOG mode (development)
  * - LOG mode prevents accidental email sends during testing
- * - Email templates are plain text to avoid XSS in email clients
+ * - Email templates use HTML with proper styling
  * - All links use APP_URL from env (prevents injection)
  * - Tokens are single-use and time-limited
  */
 
 interface EmailConfig {
   from: string;
-  mode: 'smtp' | 'log';
-  smtp?: {
-    host: string;
-    port: number;
-    secure: boolean;
-    auth: {
-      user: string;
-      pass: string;
-    };
-  };
+  mode: 'resend' | 'log';
+  resendApiKey?: string;
 }
 
 function getEmailConfig(): EmailConfig {
-  const mode = process.env.LOG_EMAILS === 'true' ? 'log' : 'smtp';
+  const mode = process.env.LOG_EMAILS === 'true' ? 'log' : 'resend';
 
   if (mode === 'log') {
     return {
-      from: process.env.EMAIL_FROM || 'noreply@fantastyredzone.com',
+      from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
       mode: 'log',
     };
   }
 
-  // SMTP mode - validate all required vars
-  const host = process.env.SMTP_HOST;
-  const port = process.env.SMTP_PORT;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
+  // Resend mode - validate API key
+  const resendApiKey = process.env.RESEND_API_KEY;
 
-  if (!host || !port || !user || !pass) {
-    throw new Error(
-      'SMTP configuration incomplete. Required: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS'
-    );
+  if (!resendApiKey) {
+    throw new Error('RESEND_API_KEY is required for email sending');
   }
 
   return {
-    from: process.env.EMAIL_FROM || 'noreply@fantastyredzone.com',
-    mode: 'smtp',
-    smtp: {
-      host,
-      port: parseInt(port, 10),
-      secure: parseInt(port, 10) === 465, // Use TLS on port 465
-      auth: { user, pass },
-    },
+    from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+    mode: 'resend',
+    resendApiKey,
   };
 }
 
 class EmailService {
-  private transporter: nodemailer.Transporter | null = null;
+  private resend: Resend | null = null;
   private config: EmailConfig;
 
   constructor() {
     this.config = getEmailConfig();
 
-    if (this.config.mode === 'smtp' && this.config.smtp) {
-      this.transporter = nodemailer.createTransport(this.config.smtp);
+    if (this.config.mode === 'resend' && this.config.resendApiKey) {
+      this.resend = new Resend(this.config.resendApiKey);
     }
   }
 
   /**
-   * Send email (SMTP) or log to console (development)
+   * Send email (Resend) or log to console (development)
    * 
    * SECURITY: Never logs sensitive info (tokens/passwords) to production logs
    */
-  private async send(to: string, subject: string, text: string): Promise<void> {
+  private async send(to: string, subject: string, html: string): Promise<void> {
+    console.log('[EmailService] Attempting to send email...');
+    console.log('[EmailService] Mode:', this.config.mode);
+    console.log('[EmailService] To:', to);
+    console.log('[EmailService] Subject:', subject);
+
     if (this.config.mode === 'log') {
       console.log('\n📧 EMAIL (LOG MODE - NOT SENT)');
       console.log('To:', to);
       console.log('Subject:', subject);
-      console.log('Body:\n', text);
+      console.log('HTML preview:\n', html.substring(0, 200) + '...');
       console.log('---\n');
       return;
     }
 
-    if (!this.transporter) {
-      throw new Error('Email transporter not configured');
+    if (!this.resend) {
+      console.error('[EmailService] ❌ Resend client not configured!');
+      throw new Error('Resend client not configured');
     }
 
-    await this.transporter.sendMail({
-      from: this.config.from,
-      to,
-      subject,
-      text,
-    });
+    try {
+      console.log('[EmailService] Calling Resend API...');
+      const result = await this.resend.emails.send({
+        from: this.config.from,
+        to,
+        subject,
+        html,
+      });
+      console.log('[EmailService] ✅ Email sent successfully!', result);
+    } catch (error) {
+      console.error('[EmailService] ❌ Failed to send email:', error);
+      throw error;
+    }
   }
 
   /**
@@ -132,24 +127,49 @@ class EmailService {
     const verifyUrl = `${appUrl}/auth/verify-email?token=${rawToken}`;
 
     const subject = 'Verify Your Email - Fantasy Red Zone';
-    const text = `
-Hello,
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 28px;">Fantasy Red Zone</h1>
+          </div>
+          
+          <div style="background: white; padding: 40px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
+            <h2 style="color: #1f2937; margin-top: 0;">Verify Your Email</h2>
+            
+            <p style="color: #4b5563; font-size: 16px;">
+              Thanks for signing up! Please verify your email address by clicking the button below:
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${verifyUrl}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block; font-size: 16px;">
+                Verify Email Address
+              </a>
+            </div>
+            
+            <p style="color: #6b7280; font-size: 14px;">
+              Or copy and paste this link into your browser:
+            </p>
+            <p style="color: #667eea; font-size: 14px; word-break: break-all;">
+              ${verifyUrl}
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+            
+            <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+              This verification link will expire in 24 hours. If you didn't create an account, you can safely ignore this email.
+            </p>
+          </div>
+        </body>
+      </html>
+    `;
 
-Thank you for signing up for Fantasy Red Zone!
-
-Please verify your email address by clicking the link below:
-
-${verifyUrl}
-
-This link will expire in 24 hours.
-
-If you didn't create an account, you can safely ignore this email.
-
----
-Fantasy Red Zone Team
-`.trim();
-
-    await this.send(email, subject, text);
+    await this.send(email, subject, html);
   }
 
   /**
@@ -185,25 +205,49 @@ Fantasy Red Zone Team
     const resetUrl = `${appUrl}/auth/reset-password?token=${rawToken}`;
 
     const subject = 'Reset Your Password - Fantasy Red Zone';
-    const text = `
-Hello,
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 28px;">Fantasy Red Zone</h1>
+          </div>
+          
+          <div style="background: white; padding: 40px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
+            <h2 style="color: #1f2937; margin-top: 0;">Reset Your Password</h2>
+            
+            <p style="color: #4b5563; font-size: 16px;">
+              We received a request to reset your password. Click the button below to create a new password:
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetUrl}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block; font-size: 16px;">
+                Reset Password
+              </a>
+            </div>
+            
+            <p style="color: #6b7280; font-size: 14px;">
+              Or copy and paste this link into your browser:
+            </p>
+            <p style="color: #667eea; font-size: 14px; word-break: break-all;">
+              ${resetUrl}
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+            
+            <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+              This password reset link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.
+            </p>
+          </div>
+        </body>
+      </html>
+    `;
 
-We received a request to reset your password for Fantasy Red Zone.
-
-Click the link below to reset your password:
-
-${resetUrl}
-
-This link will expire in 1 hour.
-
-If you didn't request a password reset, you can safely ignore this email.
-Your password will not be changed.
-
----
-Fantasy Red Zone Team
-`.trim();
-
-    await this.send(email, subject, text);
+    await this.send(email, subject, html);
   }
 
   /**

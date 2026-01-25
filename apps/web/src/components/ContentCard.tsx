@@ -78,13 +78,13 @@ export function ContentCard({ content, featured = false }: ContentCardProps) {
           />
         </div>
       ) : (
-        /* Large Source Logo for Articles (no real thumbnail) - Shorter height */
-        <div className="w-full h-32 rounded-t-lg bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        /* Compact Source Logo for Articles (no real thumbnail) */
+        <div className="w-full h-24 rounded-t-lg bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
           {content.source.logoUrl ? (
             <img
               src={content.source.logoUrl}
               alt={content.source.name}
-              className="w-20 h-20 object-contain opacity-90"
+              className="w-12 h-12 object-contain opacity-90"
             />
           ) : (
             <div className="text-gray-400 text-sm font-medium">
@@ -134,6 +134,31 @@ export function ContentCard({ content, featured = false }: ContentCardProps) {
           <p className="text-gray-600 text-sm mb-3 line-clamp-2">
             {content.description}
           </p>
+        )}
+
+        {/* Tags */}
+        {content.tags && content.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {content.tags.slice(0, 5).map((tag) => (
+              <span
+                key={tag.id}
+                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                  tag.type === 'PLAYER' ? 'bg-blue-100 text-blue-700' :
+                  tag.type === 'TEAM' ? 'bg-purple-100 text-purple-700' :
+                  tag.type === 'POSITION' ? 'bg-green-100 text-green-700' :
+                  tag.type === 'TOPIC' ? 'bg-orange-100 text-orange-700' :
+                  'bg-gray-100 text-gray-700'
+                }`}
+              >
+                {tag.name}
+              </span>
+            ))}
+            {content.tags.length > 5 && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                +{content.tags.length - 5}
+              </span>
+            )}
+          </div>
         )}
 
         <div className="flex items-center justify-between text-sm text-gray-500">

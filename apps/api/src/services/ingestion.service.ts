@@ -1,6 +1,7 @@
 import Parser from 'rss-parser';
 import prisma from '../db/client';
 import { ContentType, SourceType } from '@fantasy-red-zone/shared';
+import { taggerService } from './tagger.service';
 
 const parser = new Parser({
   timeout: 10000,
@@ -62,6 +63,11 @@ export class IngestionService {
     const startTime = Date.now();
     
     try {
+      // Load tag dictionary before ingestion
+      if (!taggerService.isLoaded()) {
+        await taggerService.loadDictionary();
+      }
+
       const sources = await prisma.source.findMany({
         where: { isActive: true },
         orderBy: { name: 'asc' }
@@ -193,11 +199,16 @@ export class IngestionService {
             }
           }
 
-          // Create content
+          // Match tags for this content
+          const title = item.title || 'Untitled';
+          const description = item.contentSnippet || item.content || item.summary || null;
+          const tagIds = taggerService.matchTags(title, description);
+
+          // Create content with tag associations
           await prisma.content.create({
             data: {
-              title: item.title || 'Untitled',
-              description: item.contentSnippet || item.content || item.summary || null,
+              title,
+              description,
               canonicalUrl,
               thumbnailUrl,
               type: contentType,
@@ -206,6 +217,10 @@ export class IngestionService {
               metadata: {
                 author: item.creator || (item as any).author,
                 categories: item.categories || []
+              },
+              // Create ContentTag join records
+              contentTags: {
+                create: tagIds.map(tagId => ({ tagId }))
               }
             }
           });

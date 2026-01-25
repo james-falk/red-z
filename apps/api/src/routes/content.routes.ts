@@ -30,6 +30,27 @@ router.get('/', optionalAuth, async (req: AuthRequest, res: Response) => {
       ];
     }
 
+    // Tag filtering: content must have ALL specified tags (AND logic)
+    if (filters.tags) {
+      const tagSlugs = filters.tags.split(',').map(s => s.trim()).filter(Boolean);
+      if (tagSlugs.length > 0) {
+        // Find tag IDs from slugs
+        const tags = await prisma.tag.findMany({
+          where: { slug: { in: tagSlugs } },
+          select: { id: true }
+        });
+        const tagIds = tags.map(t => t.id);
+
+        if (tagIds.length > 0) {
+          where.contentTags = {
+            some: {
+              tagId: { in: tagIds }
+            }
+          };
+        }
+      }
+    }
+
     if (filters.cursor) {
       where.id = { lt: filters.cursor };
     }
@@ -50,6 +71,18 @@ router.get('/', optionalAuth, async (req: AuthRequest, res: Response) => {
             logoUrl: true
           }
         },
+        contentTags: {
+          include: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                type: true
+              }
+            }
+          }
+        },
         savedBy: req.user ? {
           where: { userId: req.user.id },
           select: { id: true }
@@ -63,6 +96,8 @@ router.get('/', optionalAuth, async (req: AuthRequest, res: Response) => {
 
     const data = items.map(item => ({
       ...item,
+      tags: item.contentTags.map(ct => ct.tag),
+      contentTags: undefined,
       isSaved: req.user ? item.savedBy && (item.savedBy as any[]).length > 0 : false,
       savedBy: undefined
     }));
@@ -91,6 +126,18 @@ router.get('/:id', optionalAuth, async (req: AuthRequest, res: Response) => {
             logoUrl: true
           }
         },
+        contentTags: {
+          include: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                type: true
+              }
+            }
+          }
+        },
         savedBy: req.user ? {
           where: { userId: req.user.id },
           select: { id: true }
@@ -104,6 +151,8 @@ router.get('/:id', optionalAuth, async (req: AuthRequest, res: Response) => {
 
     const result = {
       ...content,
+      tags: content.contentTags.map(ct => ct.tag),
+      contentTags: undefined,
       isSaved: req.user ? content.savedBy && (content.savedBy as any[]).length > 0 : false,
       savedBy: undefined
     };

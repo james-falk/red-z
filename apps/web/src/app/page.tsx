@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { ContentGrid } from '@/components/ContentGrid';
 import { FeaturedCarousel } from '@/components/FeaturedCarousel';
+import { TagFilter } from '@/components/TagFilter';
 import { ContentType } from '@fantasy-red-zone/shared';
 
 export default function HomePage() {
   const [filters, setFilters] = useState<Record<string, any>>({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +30,17 @@ export default function HomePage() {
     setFilters({ ...filters, sort });
   };
 
+  const handleTagsChange = (tags: string[]) => {
+    setSelectedTags(tags);
+    const newFilters = { ...filters };
+    if (tags.length > 0) {
+      newFilters.tags = tags.join(',');
+    } else {
+      delete newFilters.tags;
+    }
+    setFilters(newFilters);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
@@ -40,6 +53,11 @@ export default function HomePage() {
       </div>
 
       <FeaturedCarousel />
+
+      {/* Tag Filter */}
+      <div className="mb-6">
+        <TagFilter selectedTags={selectedTags} onTagsChange={handleTagsChange} />
+      </div>
 
       <div className="mb-6 space-y-4">
         <form onSubmit={handleSearch} className="flex gap-2">

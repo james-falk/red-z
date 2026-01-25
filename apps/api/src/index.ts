@@ -17,6 +17,7 @@ import myFeedRoutes from './routes/my-feed.routes';
 import sleeperRoutes from './routes/sleeper.routes';
 import ingestRoutes from './routes/ingest.routes';
 import featuredRoutes from './routes/featured.routes';
+import tagsRoutes from './routes/tags.routes';
 
 // Load environment variables
 dotenv.config();
@@ -46,6 +47,7 @@ app.use('/me/feed', myFeedRoutes);
 app.use('/integrations/sleeper', sleeperRoutes);
 app.use('/ingest', ingestRoutes);
 app.use('/featured', featuredRoutes);
+app.use('/tags', tagsRoutes);
 
 // Error handler
 app.use(errorHandler);

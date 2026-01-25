@@ -18,6 +18,14 @@ export enum UserRole {
   ADMIN = 'ADMIN'
 }
 
+export enum TagType {
+  PLAYER = 'PLAYER',
+  TEAM = 'TEAM',
+  POSITION = 'POSITION',
+  TOPIC = 'TOPIC',
+  KEYWORD = 'KEYWORD'
+}
+
 // Validation Schemas
 export const createSourceSchema = z.object({
   name: z.string().min(1).max(255),
@@ -39,7 +47,7 @@ export const updateSourceSchema = z.object({
 export const contentFiltersSchema = z.object({
   type: z.nativeEnum(ContentType).optional(),
   q: z.string().optional(),
-  tags: z.string().optional(),
+  tags: z.string().optional(), // Comma-separated tag slugs
   sourceId: z.string().optional(),
   sort: z.enum(['recent', 'popular']).optional().default('recent'),
   limit: z.coerce.number().min(1).max(100).optional().default(20),

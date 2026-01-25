@@ -1,5 +1,7 @@
 import prisma from './client.js';
-import { SourceType, ContentType } from '@fantasy-red-zone/shared';
+import { SourceType, ContentType, TagType } from '@fantasy-red-zone/shared';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * Generate favicon URL from website URL using Google's service
@@ -296,6 +298,43 @@ async function seed() {
       console.error(`  ✗ Failed to seed ${sourceData.name}:`, error);
     }
   }
+
+  console.log('\n🏷️  Seeding tags...');
+  
+  // Load tag data (go up to repo root)
+  const tagsPath = path.join(__dirname, '../../../../data/tags.seed.json');
+  const tagData = JSON.parse(fs.readFileSync(tagsPath, 'utf-8'));
+  
+  let tagsCreated = 0;
+  for (const tag of tagData.tags) {
+    try {
+      // Store patterns in description as JSON config
+      const configData = {
+        patterns: tag.patterns,
+        originalDescription: tag.description
+      };
+      
+      await prisma.tag.upsert({
+        where: { slug: tag.slug },
+        update: {
+          name: tag.name,
+          type: tag.type as TagType,
+          description: JSON.stringify(configData)
+        },
+        create: {
+          name: tag.name,
+          slug: tag.slug,
+          type: tag.type as TagType,
+          description: JSON.stringify(configData)
+        }
+      });
+      tagsCreated++;
+    } catch (error) {
+      console.error(`  ✗ Failed to seed tag ${tag.name}:`, error);
+    }
+  }
+  
+  console.log(`✅ Seeded ${tagsCreated} tags`);
 
   console.log('\n🎉 Seeding complete!');
   console.log('');

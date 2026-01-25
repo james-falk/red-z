@@ -13,6 +13,7 @@
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:seed": "tsx src/db/seed.ts",
+    "db:retag": "tsx src/scripts/retag-content.ts",
     "ingest": "tsx src/scripts/ingest.ts",
     "ingest:prod": "node dist/scripts/ingest.js",
     "lint": "eslint src --ext .ts"
@@ -28,6 +29,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.3",
+    "resend": "^6.8.0",
     "rss-parser": "^3.13.0",
     "zod": "^3.25.76"
   },

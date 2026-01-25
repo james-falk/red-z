@@ -1,0 +1,200 @@
+{
+  "tags": [
+    {
+      "type": "POSITION",
+      "name": "Quarterback",
+      "slug": "qb",
+      "patterns": ["\\bQB\\b", "\\bquarterback\\b", "\\bpassers?\\b"],
+      "description": "Quarterback position content"
+    },
+    {
+      "type": "POSITION",
+      "name": "Running Back",
+      "slug": "rb",
+      "patterns": ["\\bRB\\b", "\\brunning back\\b", "\\brusher\\b"],
+      "description": "Running back position content"
+    },
+    {
+      "type": "POSITION",
+      "name": "Wide Receiver",
+      "slug": "wr",
+      "patterns": ["\\bWR\\b", "\\bwide receiver\\b", "\\breceiver\\b"],
+      "description": "Wide receiver position content"
+    },
+    {
+      "type": "POSITION",
+      "name": "Tight End",
+      "slug": "te",
+      "patterns": ["\\bTE\\b", "\\btight end\\b"],
+      "description": "Tight end position content"
+    },
+    {
+      "type": "POSITION",
+      "name": "Defense",
+      "slug": "def",
+      "patterns": ["\\bDEF\\b", "\\bD/ST\\b", "\\bdefense\\b", "\\bdefensive\\b"],
+      "description": "Defense/Special teams content"
+    },
+    {
+      "type": "POSITION",
+      "name": "Kicker",
+      "slug": "k",
+      "patterns": ["\\bK\\b", "\\bkicker\\b", "\\bfield goal\\b"],
+      "description": "Kicker position content"
+    },
+    {
+      "type": "TOPIC",
+      "name": "Draft",
+      "slug": "draft",
+      "patterns": ["\\bdraft\\b", "\\bmock draft\\b", "\\bdraft strategy\\b", "\\bdraft picks?\\b", "\\bADP\\b", "\\baverage draft position\\b"],
+      "description": "Fantasy draft related content"
+    },
+    {
+      "type": "TOPIC",
+      "name": "Waiver Wire",
+      "slug": "waiver",
+      "patterns": ["\\bwaiver\\b", "\\bwaivers\\b", "\\bfree agent\\b", "\\bFAAB\\b", "\\bpick[ -]?ups?\\b"],
+      "description": "Waiver wire and pickups"
+    },
+    {
+      "type": "TOPIC",
+      "name": "Trade",
+      "slug": "trade",
+      "patterns": ["\\btrade\\b", "\\btrades\\b", "\\btrading\\b", "\\btrade value\\b"],
+      "description": "Trade advice and analysis"
+    },
+    {
+      "type": "TOPIC",
+      "name": "Start/Sit",
+      "slug": "start-sit",
+      "patterns": ["\\bstart\\b", "\\bsit\\b", "\\bstart['']em\\b", "\\bsit['']em\\b", "\\blineup\\b", "\\bstart or sit\\b"],
+      "description": "Start/sit lineup decisions"
+    },
+    {
+      "type": "TOPIC",
+      "name": "Injury",
+      "slug": "injury",
+      "patterns": ["\\binjury\\b", "\\binjured\\b", "\\bIR\\b", "\\binjury report\\b", "\\bhurt\\b", "\\bquestionable\\b", "\\bdoubtful\\b", "\\bout\\b"],
+      "description": "Injury news and updates"
+    },
+    {
+      "type": "TOPIC",
+      "name": "Sleeper",
+      "slug": "sleeper",
+      "patterns": ["\\bsleeper\\b", "\\bsleepers\\b", "\\bbreakout\\b", "\\bdeep sleeper\\b"],
+      "description": "Sleeper picks and breakout candidates"
+    },
+    {
+      "type": "TOPIC",
+      "name": "Bust",
+      "slug": "bust",
+      "patterns": ["\\bbust\\b", "\\bbusts\\b", "\\boverdrafted\\b", "\\bfade\\b"],
+      "description": "Bust candidates to avoid"
+    },
+    {
+      "type": "TOPIC",
+      "name": "Rankings",
+      "slug": "rankings",
+      "patterns": ["\\brankings?\\b", "\\branked\\b", "\\btop \\d+\\b", "\\btier\\b"],
+      "description": "Player rankings and tiers"
+    },
+    {
+      "type": "TOPIC",
+      "name": "Projections",
+      "slug": "projections",
+      "patterns": ["\\bprojections?\\b", "\\bprojected\\b", "\\bforecast\\b", "\\bexpect\\b"],
+      "description": "Statistical projections"
+    },
+    {
+      "type": "KEYWORD",
+      "name": "PPR",
+      "slug": "ppr",
+      "patterns": ["\\bPPR\\b", "\\bpoint[- ]per[- ]reception\\b"],
+      "description": "PPR scoring format"
+    },
+    {
+      "type": "KEYWORD",
+      "name": "Dynasty",
+      "slug": "dynasty",
+      "patterns": ["\\bdynasty\\b", "\\bkeeper\\b"],
+      "description": "Dynasty/keeper league content"
+    },
+    {
+      "type": "KEYWORD",
+      "name": "Redraft",
+      "slug": "redraft",
+      "patterns": ["\\bredraft\\b", "\\bseason[ -]long\\b"],
+      "description": "Redraft league content"
+    },
+    {
+      "type": "KEYWORD",
+      "name": "DFS",
+      "slug": "dfs",
+      "patterns": ["\\bDFS\\b", "\\bdaily fantasy\\b", "\\bFanDuel\\b", "\\bDraftKings\\b"],
+      "description": "Daily fantasy sports"
+    },
+    {
+      "type": "PLAYER",
+      "name": "Patrick Mahomes",
+      "slug": "patrick-mahomes",
+      "patterns": ["\\bMahomes\\b", "\\bPatrick Mahomes\\b"],
+      "description": "Patrick Mahomes (KC QB)"
+    },
+    {
+      "type": "PLAYER",
+      "name": "Josh Allen",
+      "slug": "josh-allen",
+      "patterns": ["\\bJosh Allen\\b(?!.*Jaguars)"],
+      "description": "Josh Allen (BUF QB)"
+    },
+    {
+      "type": "PLAYER",
+      "name": "Christian McCaffrey",
+      "slug": "christian-mccaffrey",
+      "patterns": ["\\bMcCaffrey\\b", "\\bChristian McCaffrey\\b", "\\bCMC\\b"],
+      "description": "Christian McCaffrey (SF RB)"
+    },
+    {
+      "type": "PLAYER",
+      "name": "Tyreek Hill",
+      "slug": "tyreek-hill",
+      "patterns": ["\\bTyreek\\b", "\\bTyreek Hill\\b", "\\bCheetah\\b"],
+      "description": "Tyreek Hill (MIA WR)"
+    },
+    {
+      "type": "PLAYER",
+      "name": "Travis Kelce",
+      "slug": "travis-kelce",
+      "patterns": ["\\bKelce\\b", "\\bTravis Kelce\\b"],
+      "description": "Travis Kelce (KC TE)"
+    },
+    {
+      "type": "TEAM",
+      "name": "Kansas City Chiefs",
+      "slug": "chiefs",
+      "patterns": ["\\bChiefs\\b", "\\bKansas City\\b", "\\bKC\\b(?!.*basketball)"],
+      "description": "Kansas City Chiefs"
+    },
+    {
+      "type": "TEAM",
+      "name": "Buffalo Bills",
+      "slug": "bills",
+      "patterns": ["\\bBills\\b", "\\bBuffalo\\b"],
+      "description": "Buffalo Bills"
+    },
+    {
+      "type": "TEAM",
+      "name": "San Francisco 49ers",
+      "slug": "49ers",
+      "patterns": ["\\b49ers\\b", "\\bSan Francisco\\b", "\\bSF\\b(?!.*baseball)"],
+      "description": "San Francisco 49ers"
+    },
+    {
+      "type": "TEAM",
+      "name": "Miami Dolphins",
+      "slug": "dolphins",
+      "patterns": ["\\bDolphins\\b", "\\bMiami\\b(?!.*Heat)"],
+      "description": "Miami Dolphins"
+    }
+  ]
+}

@@ -125,6 +125,7 @@ model Content {
   source       Source        @relation(fields: [sourceId], references: [id], onDelete: Cascade)
   savedBy      SavedContent[]
   featuredItem FeaturedItem?
+  contentTags  ContentTag[]
 
   @@index([sourceId])
   @@index([publishedAt(sort: Desc)])
@@ -136,6 +137,43 @@ enum ContentType {
   ARTICLE
   VIDEO
   PODCAST
+}
+
+enum TagType {
+  PLAYER
+  TEAM
+  POSITION
+  TOPIC
+  KEYWORD
+}
+
+model Tag {
+  id          String   @id @default(cuid())
+  type        TagType
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  contentTags ContentTag[]
+
+  @@index([type])
+  @@index([slug])
+}
+
+model ContentTag {
+  id        String   @id @default(cuid())
+  contentId String
+  tagId     String
+  createdAt DateTime @default(now())
+
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, tagId])
+  @@index([contentId])
+  @@index([tagId])
 }
 
 model FavoriteSource {
