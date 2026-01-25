@@ -2,6 +2,10 @@
   "name": "fantasy-red-zone",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0 <23.0.0",
+    "pnpm": ">=9.0.0"
+  },
   "scripts": {
     "dev": "pnpm --filter \"./apps/**\" dev",
     "build": "pnpm --filter \"./packages/**\" build && pnpm --filter \"./apps/**\" build",

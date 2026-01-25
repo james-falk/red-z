@@ -81,45 +81,33 @@ async function seed() {
     },
     
     // === YOUTUBE CHANNELS ===
-    // NOTE: Using placeholder channel IDs - will need to update with real IDs
-    // YouTube RSS format: https://www.youtube.com/feeds/videos.xml?channel_id=CHANNEL_ID
-    // DISABLED until real channel IDs are provided
-    
-    // {
-    //   name: 'The Fantasy Footballers (YouTube)',
-    //   type: SourceType.YOUTUBE,
-    //   feedUrl: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCw4A1cVAFsRY4PVTY_5bjnA',
-    //   websiteUrl: 'https://www.youtube.com/@TheFantasyFootballers',
-    //   description: 'The Fantasy Footballers - Most popular fantasy football podcast',
-    //   isActive: false
-    // },
-    // {
-    //   name: 'Fantasy Pros (YouTube)',
-    //   type: SourceType.YOUTUBE,
-    //   feedUrl: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCw4A1cVAFsRY4PVTY_5bjnA',
-    //   websiteUrl: 'https://www.youtube.com/@FantasyPros',
-    //   description: 'FantasyPros YouTube channel - rankings, analysis, news',
-    //   isActive: false
-    // },
-    // {
-    //   name: 'Harris Football (YouTube)',
-    //   type: SourceType.YOUTUBE,
-    //   feedUrl: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCw4A1cVAFsRY4PVTY_5bjnA',
-    //   websiteUrl: 'https://www.youtube.com/@HarrisFootball',
-    //   description: 'Christopher Harris - in-depth fantasy football analysis',
-    //   isActive: false
-    // },
-    // {
-    //   name: 'Late Round Podcast (YouTube)',
-    //   type: SourceType.YOUTUBE,
-    //   feedUrl: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCw4A1cVAFsRY4PVTY_5bjnA',
-    //   websiteUrl: 'https://www.youtube.com/@LateRoundPodcast',
-    //   description: 'Late Round Podcast - fantasy football draft strategy',
-    //   isActive: false
-    // }
+    {
+      name: 'Underdog Fantasy - Josh & Hayden',
+      type: SourceType.YOUTUBE,
+      feedUrl: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC7fnz7139CGSdtHWaPMCpIw',
+      websiteUrl: 'https://www.youtube.com/channel/UC7fnz7139CGSdtHWaPMCpIw',
+      description: 'Underdog Fantasy analysis and picks from Josh & Hayden',
+      isActive: true
+    },
+    {
+      name: 'The Fantasy Football Fellas',
+      type: SourceType.YOUTUBE,
+      feedUrl: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCItKyZGyIYr1vJxCrL5M3Yg',
+      websiteUrl: 'https://www.youtube.com/channel/UCItKyZGyIYr1vJxCrL5M3Yg',
+      description: 'Fantasy football analysis, rankings, and draft strategies',
+      isActive: true
+    },
+    {
+      name: 'Fantasy Football Today',
+      type: SourceType.YOUTUBE,
+      feedUrl: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCviK78rIWXhZdFzJ1Woi7Fg',
+      websiteUrl: 'https://www.youtube.com/channel/UCviK78rIWXhZdFzJ1Woi7Fg',
+      description: 'CBS Sports fantasy football podcast and analysis',
+      isActive: true
+    }
   ];
 
-  console.log(`🌱 Seeding ${sources.length} fantasy football sources (${sources.filter(s => s.type === 'RSS').length} RSS)...\n`);
+  console.log(`🌱 Seeding ${sources.length} fantasy football sources (${sources.filter(s => s.type === 'RSS').length} RSS + ${sources.filter(s => s.type === 'YOUTUBE').length} YouTube)...\n`);
 
   for (const sourceData of sources) {
     try {
