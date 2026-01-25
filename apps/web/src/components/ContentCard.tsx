@@ -22,8 +22,11 @@ export function ContentCard({ content, featured = false }: ContentCardProps) {
   const [isSaved, setIsSaved] = useState(content.isSaved || false);
   const [imgError, setImgError] = useState(false);
 
+  // Check if content has a real thumbnail (not a fallback)
+  const hasRealThumbnail = content.thumbnailUrl && !imgError;
+  
   // Determine thumbnail to display
-  const thumbnailUrl = content.thumbnailUrl && !imgError 
+  const thumbnailUrl = hasRealThumbnail
     ? content.thumbnailUrl 
     : FALLBACK_THUMBNAILS[content.type as keyof typeof FALLBACK_THUMBNAILS] || FALLBACK_THUMBNAILS.ARTICLE;
 
@@ -63,15 +66,33 @@ export function ContentCard({ content, featured = false }: ContentCardProps) {
 
   return (
     <div className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow ${featured ? 'border-2 border-primary-500' : 'border border-gray-200'}`}>
-      {/* Thumbnail - always show (use fallback if needed) */}
-      <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100">
-        <img
-          src={thumbnailUrl}
-          alt={content.title}
-          className="w-full h-full object-cover"
-          onError={() => setImgError(true)}
-        />
-      </div>
+      {/* Header Image Area */}
+      {hasRealThumbnail ? (
+        /* Real Thumbnail (Video/Podcast) */
+        <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100">
+          <img
+            src={thumbnailUrl}
+            alt={content.title}
+            className="w-full h-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        </div>
+      ) : (
+        /* Large Source Logo for Articles (no real thumbnail) */
+        <div className="aspect-video w-full rounded-t-lg bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+          {content.source.logoUrl ? (
+            <img
+              src={content.source.logoUrl}
+              alt={content.source.name}
+              className="w-24 h-24 object-contain opacity-90"
+            />
+          ) : (
+            <div className="text-gray-400 text-sm font-medium">
+              {content.source.name}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="p-4">
         <div className="flex items-center justify-between mb-2">
