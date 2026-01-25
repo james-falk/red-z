@@ -69,6 +69,7 @@ export function AdvancedSearchModal({ isOpen, onClose, onSearch }: AdvancedSearc
       dateFrom: dateFrom ? new Date(dateFrom).toISOString() : undefined,
       dateTo: dateTo ? new Date(dateTo).toISOString() : undefined,
       sort,
+      limit: 20, // Default limit for advanced search
     };
     onSearch(filters);
     onClose();
