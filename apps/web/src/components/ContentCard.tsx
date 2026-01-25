@@ -23,10 +23,10 @@ export function ContentCard({ content, featured = false }: ContentCardProps) {
   const [imgError, setImgError] = useState(false);
 
   // Check if content has a real thumbnail (not a fallback)
-  const hasRealThumbnail = content.thumbnailUrl && !imgError;
+  const hasRealThumbnail = !!content.thumbnailUrl && !imgError;
   
-  // Determine thumbnail to display (always return a string, never null)
-  const thumbnailUrl = hasRealThumbnail
+  // Determine thumbnail to display (ensure it's always a string, never null)
+  const thumbnailUrl: string = hasRealThumbnail && content.thumbnailUrl
     ? content.thumbnailUrl 
     : (FALLBACK_THUMBNAILS[content.type as keyof typeof FALLBACK_THUMBNAILS] || FALLBACK_THUMBNAILS.ARTICLE);
 
