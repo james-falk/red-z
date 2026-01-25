@@ -113,6 +113,12 @@ export interface ContentItem {
     name: string;
     logoUrl: string | null;
   };
+  tags?: {
+    id: string;
+    name: string;
+    slug: string;
+    type: TagType;
+  }[];
   isSaved?: boolean;
 }
 
