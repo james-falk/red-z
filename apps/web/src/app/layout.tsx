@@ -8,6 +8,13 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata = {
   title: 'Fantasy Red Zone',
   description: 'Your ultimate fantasy football content hub',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
+  themeColor: '#2563eb',
 };
 
 export default function RootLayout({

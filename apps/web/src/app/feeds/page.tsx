@@ -63,45 +63,45 @@ export default function FeedsPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8 flex justify-between items-center">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Custom Feeds</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Custom Feeds</h1>
+          <p className="text-sm sm:text-base text-gray-600">
             Create and manage your personalized content feeds
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="bg-primary-600 text-white px-4 py-2 rounded-md font-medium hover:bg-primary-700"
+          className="bg-primary-600 text-white px-4 sm:px-6 py-2.5 sm:py-2 rounded-md text-sm sm:text-base font-medium hover:bg-primary-700 min-h-[44px] whitespace-nowrap"
         >
-          Create Feed
+          + Create Feed
         </button>
       </div>
 
       {feeds.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-          <p className="text-gray-500 mb-4">No custom feeds yet</p>
+        <div className="text-center py-8 sm:py-12 bg-white rounded-lg shadow-sm">
+          <p className="text-sm sm:text-base text-gray-500 mb-4">No custom feeds yet</p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="bg-primary-600 text-white px-6 py-3 rounded-md font-medium hover:bg-primary-700"
+            className="bg-primary-600 text-white px-6 py-3 rounded-md text-sm sm:text-base font-medium hover:bg-primary-700 min-h-[44px]"
           >
             Create Your First Feed
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {feeds.map((feed) => (
             <Link
               key={feed.id}
               href={`/feeds/${feed.id}`}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow touch-manipulation"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                 {feed.name}
               </h3>
-              <p className="text-sm text-gray-500">
-                {feed._count?.sources || 0} sources
+              <p className="text-xs sm:text-sm text-gray-500">
+                {feed._count?.sources || 0} source{feed._count?.sources !== 1 ? 's' : ''}
               </p>
             </Link>
           ))}
@@ -110,8 +110,8 @@ export default function FeedsPage() {
 
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
               Create Custom Feed
             </h2>
             <form onSubmit={handleCreateFeed}>
@@ -119,14 +119,15 @@ export default function FeedsPage() {
                 type="text"
                 value={feedName}
                 onChange={(e) => setFeedName(e.target.value)}
-                placeholder="Feed name"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500 mb-4"
+                placeholder="Enter feed name"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500 mb-4 min-h-[44px]"
                 required
+                autoFocus
               />
-              <div className="flex gap-2">
+              <div className="flex gap-2 sm:gap-3">
                 <button
                   type="submit"
-                  className="flex-1 bg-primary-600 text-white px-4 py-2 rounded-md font-medium hover:bg-primary-700"
+                  className="flex-1 bg-primary-600 text-white px-4 py-2.5 sm:py-2 rounded-md text-sm sm:text-base font-medium hover:bg-primary-700 min-h-[44px]"
                 >
                   Create
                 </button>
@@ -136,7 +137,7 @@ export default function FeedsPage() {
                     setShowCreateModal(false);
                     setFeedName('');
                   }}
-                  className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-md font-medium hover:bg-gray-300"
+                  className="flex-1 bg-gray-200 text-gray-700 px-4 py-2.5 sm:py-2 rounded-md text-sm sm:text-base font-medium hover:bg-gray-300 min-h-[44px]"
                 >
                   Cancel
                 </button>

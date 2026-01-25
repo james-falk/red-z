@@ -19,6 +19,7 @@ import ingestRoutes from './routes/ingest.routes';
 import featuredRoutes from './routes/featured.routes';
 import tagsRoutes from './routes/tags.routes';
 import featuredSuggestionsRoutes from './routes/featured-suggestions.routes';
+import searchRoutes from './routes/search.routes';
 
 // Load environment variables
 dotenv.config();
@@ -50,6 +51,7 @@ app.use('/ingest', ingestRoutes);
 app.use('/featured', featuredRoutes);
 app.use('/tags', tagsRoutes);
 app.use('/featured-suggestions', featuredSuggestionsRoutes);
+app.use('/search', searchRoutes);
 
 // Error handler
 app.use(errorHandler);

@@ -74,36 +74,38 @@ export function ContentCard({ content, featured = false }: ContentCardProps) {
             src={thumbnailUrl}
             alt={content.title}
             className="w-full h-full object-cover"
+            loading="lazy"
             onError={() => setImgError(true)}
           />
         </div>
       ) : (
         /* Compact Source Logo for Articles (no real thumbnail) */
-        <div className="w-full h-24 rounded-t-lg bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="w-full h-20 sm:h-24 rounded-t-lg bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
           {content.source.logoUrl ? (
             <img
               src={content.source.logoUrl}
               alt={content.source.name}
-              className="w-12 h-12 object-contain opacity-90"
+              className="w-10 h-10 sm:w-12 sm:h-12 object-contain opacity-90"
+              loading="lazy"
             />
           ) : (
-            <div className="text-gray-400 text-sm font-medium">
+            <div className="text-gray-400 text-xs sm:text-sm font-medium px-2 text-center">
               {content.source.name}
             </div>
           )}
         </div>
       )}
 
-      <div className="p-4">
+      <div className="p-3 sm:p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+          <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
             {content.type}
           </span>
 
           {session && (
             <button
               onClick={handleSave}
-              className="text-gray-400 hover:text-primary-600"
+              className="text-gray-400 hover:text-primary-600 p-2 -mr-2 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
               aria-label={isSaved ? 'Unsave' : 'Save'}
             >
               <svg
@@ -125,24 +127,24 @@ export function ContentCard({ content, featured = false }: ContentCardProps) {
 
         <h3
           onClick={handleClick}
-          className="text-lg font-semibold text-gray-900 mb-2 cursor-pointer hover:text-primary-600"
+          className="text-base sm:text-lg font-semibold text-gray-900 mb-2 cursor-pointer hover:text-primary-600 line-clamp-2 sm:line-clamp-3 touch-manipulation"
         >
           {content.title}
         </h3>
 
         {content.description && (
-          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+          <p className="text-gray-600 text-sm mb-2 sm:mb-3 line-clamp-2">
             {content.description}
           </p>
         )}
 
         {/* Tags */}
         {content.tags && content.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-2 sm:mb-3">
             {content.tags.slice(0, 5).map((tag) => (
               <span
                 key={tag.id}
-                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-xs font-medium ${
                   tag.type === 'PLAYER' ? 'bg-blue-100 text-blue-700' :
                   tag.type === 'TEAM' ? 'bg-purple-100 text-purple-700' :
                   tag.type === 'POSITION' ? 'bg-green-100 text-green-700' :
@@ -154,26 +156,27 @@ export function ContentCard({ content, featured = false }: ContentCardProps) {
               </span>
             ))}
             {content.tags.length > 5 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+              <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
                 +{content.tags.length - 5}
               </span>
             )}
           </div>
         )}
 
-        <div className="flex items-center justify-between text-sm text-gray-500">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0 flex-1">
             {content.source.logoUrl && (
               <img
                 src={content.source.logoUrl}
                 alt={content.source.name}
-                className="w-4 h-4 rounded-full"
+                className="w-4 h-4 rounded-full flex-shrink-0"
+                loading="lazy"
               />
             )}
-            <span>{content.source.name}</span>
+            <span className="truncate">{content.source.name}</span>
           </div>
 
-          <span>{formatDate(content.publishedAt)}</span>
+          <span className="ml-2 flex-shrink-0">{formatDate(content.publishedAt)}</span>
         </div>
 
         {content.clickCount > 0 && (

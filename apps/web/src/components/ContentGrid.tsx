@@ -70,34 +70,34 @@ export function ContentGrid({ endpoint, filters = {} }: ContentGridProps) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="flex justify-center items-center py-8 sm:py-12">
+        <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-primary-600"></div>
       </div>
     );
   }
 
   if (content.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">No content found</p>
+      <div className="text-center py-8 sm:py-12 px-4">
+        <p className="text-gray-500 text-sm sm:text-base">No content found</p>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {content.map((item) => (
           <ContentCard key={item.id} content={item} />
         ))}
       </div>
 
       {hasMore && (
-        <div className="mt-8 text-center">
+        <div className="mt-6 sm:mt-8 text-center px-4">
           <button
             onClick={handleLoadMore}
             disabled={loadingMore}
-            className="bg-primary-600 text-white px-6 py-3 rounded-md font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-primary-600 text-white px-6 sm:px-8 py-3 rounded-md text-sm sm:text-base font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] w-full sm:w-auto touch-manipulation"
           >
             {loadingMore ? 'Loading...' : 'Load More'}
           </button>

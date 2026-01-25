@@ -54,6 +54,19 @@ export const contentFiltersSchema = z.object({
   cursor: z.string().optional()
 });
 
+export const advancedSearchSchema = z.object({
+  query: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  tagMatchMode: z.enum(['any', 'all']).optional().default('any'),
+  sources: z.array(z.string()).optional(),
+  contentTypes: z.array(z.nativeEnum(ContentType)).optional(),
+  dateFrom: z.string().datetime().optional(),
+  dateTo: z.string().datetime().optional(),
+  sort: z.enum(['recent', 'popular', 'relevance']).optional().default('recent'),
+  limit: z.coerce.number().min(1).max(100).optional().default(20),
+  cursor: z.string().optional()
+});
+
 export const createFeedSchema = z.object({
   name: z.string().min(1).max(255)
 });
@@ -79,6 +92,7 @@ export const updateFeaturedItemSchema = z.object({
 export type CreateSourceInput = z.infer<typeof createSourceSchema>;
 export type UpdateSourceInput = z.infer<typeof updateSourceSchema>;
 export type ContentFilters = z.infer<typeof contentFiltersSchema>;
+export type AdvancedSearchFilters = z.infer<typeof advancedSearchSchema>;
 export type CreateFeedInput = z.infer<typeof createFeedSchema>;
 export type SleeperConnectInput = z.infer<typeof sleeperConnectSchema>;
 export type CreateFeaturedItemInput = z.infer<typeof createFeaturedItemSchema>;
