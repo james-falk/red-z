@@ -6,7 +6,7 @@
 
 import { Router } from 'express';
 import { recommendationsService } from '../services/recommendations.service';
-import { authenticateToken } from '../middleware/auth';
+import { authenticateToken, AuthRequest } from '../middleware/auth';
 import prisma from '../db/client';
 
 const router = Router();
@@ -18,7 +18,7 @@ const router = Router();
  * Query params:
  * - limit: number (default: 20)
  */
-router.get('/for-you', authenticateToken, async (req, res, next) => {
+router.get('/for-you', authenticateToken, async (req: AuthRequest, res, next) => {
   try {
     const limit = parseInt(req.query.limit as string) || 20;
     const exclude = req.query.exclude ? (req.query.exclude as string).split(',') : [];
@@ -115,23 +115,19 @@ router.get('/trending', async (req, res, next) => {
             }
           }
         },
-        _count: {
-          select: {
-            savedByUsers: true
-          }
+        savedBy: {
+          select: { id: true }
         }
       },
       orderBy: {
-        savedByUsers: {
-          _count: 'desc'
-        }
+        clickCount: 'desc'
       }
     });
 
     const results = content.map(item => ({
       ...item,
-      tags: item.contentTags.map(ct => ct.tag),
-      savesCount: item._count.savedByUsers
+      tags: item.contentTags.map((ct: any) => ct.tag),
+      savesCount: item.savedBy.length
     }));
 
     res.json({
@@ -206,7 +202,7 @@ router.get('/similar/:contentId', async (req, res, next) => {
  * POST /api/recommendations/track
  * Track user interaction with content (for ML)
  */
-router.post('/track', authenticateToken, async (req, res, next) => {
+router.post('/track', authenticateToken, async (req: AuthRequest, res, next) => {
   try {
     const { contentId, interactionType } = req.body;
 

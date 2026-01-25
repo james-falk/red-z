@@ -280,7 +280,7 @@ async function seed() {
       // Auto-generate logoUrl from websiteUrl if not provided
       const dataWithLogo = {
         ...sourceData,
-        logoUrl: sourceData.logoUrl || getFaviconUrl(sourceData.websiteUrl)
+        logoUrl: (sourceData as any).logoUrl || getFaviconUrl(sourceData.websiteUrl)
       };
       
       const source = await prisma.source.upsert({

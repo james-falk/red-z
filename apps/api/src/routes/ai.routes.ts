@@ -6,7 +6,7 @@
 
 import { Router } from 'express';
 import { aiService } from '../services/ai';
-import { authenticateToken } from '../middleware/auth';
+import { authenticateToken, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
@@ -24,7 +24,7 @@ const router = Router();
  *   };
  * }
  */
-router.post('/chat', authenticateToken, async (req, res, next) => {
+router.post('/chat', authenticateToken, async (req: AuthRequest, res, next) => {
   try {
     if (!aiService.isEnabled) {
       return res.status(503).json({
@@ -78,7 +78,7 @@ router.get('/status', async (req, res, next) => {
  * POST /api/ai/suggest-tags
  * Get AI-suggested tags for content (admin only)
  */
-router.post('/suggest-tags', authenticateToken, async (req, res, next) => {
+router.post('/suggest-tags', authenticateToken, async (req: AuthRequest, res, next) => {
   try {
     if (!aiService.isEnabled) {
       return res.status(503).json({
