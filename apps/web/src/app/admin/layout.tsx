@@ -50,6 +50,7 @@ export default function AdminLayout({
     { name: 'Sources', href: '/admin/sources', icon: '📡' },
     { name: 'Ingestion', href: '/admin/ingestion', icon: '🔄' },
     { name: 'Users', href: '/admin/users', icon: '👥' },
+    { name: 'Analytics', href: '/admin/analytics', icon: '📊' },
   ];
 
   return (

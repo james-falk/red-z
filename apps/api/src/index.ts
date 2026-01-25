@@ -20,6 +20,9 @@ import featuredRoutes from './routes/featured.routes';
 import tagsRoutes from './routes/tags.routes';
 import featuredSuggestionsRoutes from './routes/featured-suggestions.routes';
 import searchRoutes from './routes/search.routes';
+import aiRoutes from './routes/ai.routes';
+import recommendationsRoutes from './routes/recommendations.routes';
+import analyticsRoutes from './routes/analytics.routes';
 
 // Load environment variables
 dotenv.config();
@@ -52,6 +55,9 @@ app.use('/featured', featuredRoutes);
 app.use('/tags', tagsRoutes);
 app.use('/featured-suggestions', featuredSuggestionsRoutes);
 app.use('/search', searchRoutes);
+app.use('/ai', aiRoutes);
+app.use('/recommendations', recommendationsRoutes);
+app.use('/analytics', analyticsRoutes);
 
 // Error handler
 app.use(errorHandler);

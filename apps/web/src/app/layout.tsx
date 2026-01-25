@@ -2,8 +2,12 @@ import '../styles/globals.css';
 import { Inter } from 'next/font/google';
 import { Providers } from './providers';
 import { Navigation } from '@/components/Navigation';
+import AIChatWidget from '@/components/AIChatWidget';
 
 const inter = Inter({ subsets: ['latin'] });
+
+// Check if AI is enabled via environment variable
+const AI_ENABLED = process.env.NEXT_PUBLIC_AI_ENABLED === 'true';
 
 export const metadata = {
   title: 'Fantasy Red Zone',
@@ -29,6 +33,7 @@ export default function RootLayout({
           <div className="min-h-screen bg-gray-50">
             <Navigation />
             <main>{children}</main>
+            <AIChatWidget enabled={AI_ENABLED} />
           </div>
         </Providers>
       </body>

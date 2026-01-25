@@ -172,4 +172,63 @@ router.post('/sync', authenticateToken, async (req: AuthRequest, res: Response) 
   }
 });
 
+/**
+ * GET /api/integrations/sleeper/roster-content/:leagueId
+ * Get content relevant to user's roster players
+ */
+router.get('/roster-content/:leagueId', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { leagueId } = req.params;
+    const limit = parseInt(req.query.limit as string) || 20;
+
+    const account = await prisma.userSleeperAccount.findUnique({
+      where: { userId: req.user!.id }
+    });
+
+    if (!account) {
+      return res.status(404).json({ error: 'Sleeper account not connected' });
+    }
+
+    const content = await sleeperService.getRosterRelevantContent(
+      account.sleeperUserId,
+      leagueId,
+      limit
+    );
+
+    res.json({
+      content,
+      total: content.length
+    });
+  } catch (error) {
+    console.error('Error fetching roster content:', error);
+    res.status(500).json({ error: 'Failed to fetch roster content' });
+  }
+});
+
+/**
+ * POST /api/integrations/sleeper/player-content
+ * Get content for specific players
+ * Body: { players: string[] }
+ */
+router.post('/player-content', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { players } = req.body;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    if (!players || !Array.isArray(players)) {
+      return res.status(400).json({ error: 'players array is required' });
+    }
+
+    const content = await sleeperService.getPlayerContent(players, limit);
+
+    res.json({
+      content,
+      total: content.length
+    });
+  } catch (error) {
+    console.error('Error fetching player content:', error);
+    res.status(500).json({ error: 'Failed to fetch player content' });
+  }
+});
+
 export default router;
