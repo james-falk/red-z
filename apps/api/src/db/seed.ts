@@ -79,6 +79,158 @@ async function seed() {
       description: '4for4 fantasy football analysis and news',
       isActive: true
     },
+    {
+      name: 'Pro Football Focus',
+      type: SourceType.RSS,
+      feedUrl: 'https://www.pff.com/feed',
+      websiteUrl: 'https://www.pff.com',
+      description: 'Pro Football Focus',
+      isActive: true
+    },
+    {
+      name: 'Fantasy Football Analytics',
+      type: SourceType.RSS,
+      feedUrl: 'https://fantasyfootballanalytics.net/feed',
+      websiteUrl: 'https://fantasyfootballanalytics.net',
+      description: 'Fantasy Football Analytics',
+      isActive: true
+    },
+    {
+      name: 'Walter Football',
+      type: SourceType.RSS,
+      feedUrl: 'https://walterfootball.com/rss.xml',
+      websiteUrl: 'https://walterfootball.com',
+      description: 'WalterFootball.com',
+      isActive: true
+    },
+    {
+      name: 'FFToday News',
+      type: SourceType.RSS,
+      feedUrl: 'https://www.fftoday.com/rss/news.xml',
+      websiteUrl: 'https://www.fftoday.com',
+      description: 'FFToday: Fantasy Football News',
+      isActive: true
+    },
+    {
+      name: 'Dynasty League Football',
+      type: SourceType.RSS,
+      feedUrl: 'https://dynastyleaguefootball.com/feed/',
+      websiteUrl: 'https://dynastyleaguefootball.com',
+      description: 'Dynasty League Football',
+      isActive: true
+    },
+    {
+      name: 'Dynasty Nerds',
+      type: SourceType.RSS,
+      feedUrl: 'https://www.dynastynerds.com/feed/',
+      websiteUrl: 'https://www.dynastynerds.com',
+      description: 'Dynasty Nerds',
+      isActive: true
+    },
+    {
+      name: 'RotoViz',
+      type: SourceType.RSS,
+      feedUrl: 'https://www.rotoviz.com/feed/',
+      websiteUrl: 'https://www.rotoviz.com',
+      description: 'RotoViz',
+      isActive: true
+    },
+    {
+      name: 'Player Profiler',
+      type: SourceType.RSS,
+      feedUrl: 'https://www.playerprofiler.com/feed/',
+      websiteUrl: 'https://www.playerprofiler.com',
+      description: 'PlayerProfiler',
+      isActive: true
+    },
+    {
+      name: 'Apex Fantasy Leagues',
+      type: SourceType.RSS,
+      feedUrl: 'https://apexfantasyleagues.com/feed/',
+      websiteUrl: 'https://apexfantasyleagues.com',
+      description: 'Apex Fantasy Football Money Leagues',
+      isActive: true
+    },
+    {
+      name: 'Dynasty Football Factory',
+      type: SourceType.RSS,
+      feedUrl: 'https://dynastyfootballfactory.com/feed/',
+      websiteUrl: 'https://dynastyfootballfactory.com',
+      description: 'Dynasty Football Factory',
+      isActive: true
+    },
+    {
+      name: 'Fantasy Football Counselor',
+      type: SourceType.RSS,
+      feedUrl: 'https://thefantasyfootballcounselor.com/category/fantasy-football-101/feed/',
+      websiteUrl: 'https://thefantasyfootballcounselor.com',
+      description: 'Fantasy Football 101: How to Win Fantasy Football',
+      isActive: true
+    },
+    {
+      name: 'UTH Dynasty',
+      type: SourceType.RSS,
+      feedUrl: 'https://uthdynasty.com/feed/',
+      websiteUrl: 'https://uthdynasty.com',
+      description: 'UTHDynasty.com',
+      isActive: true
+    },
+    {
+      name: 'The IDP Guru',
+      type: SourceType.RSS,
+      feedUrl: 'https://feeds.feedburner.com/theIdpGuru',
+      websiteUrl: 'https://feeds.feedburner.com',
+      description: 'The IDP Guru',
+      isActive: true
+    },
+    {
+      name: 'Fantasy Football Guidebook',
+      type: SourceType.RSS,
+      feedUrl: 'http://fantasyfootballguidebook.blogspot.com/feeds/posts/default?alt=rss',
+      websiteUrl: 'http://fantasyfootballguidebook.blogspot.com',
+      description: 'Fantasy Football Guidebook',
+      isActive: true
+    },
+    {
+      name: 'Dynasty Trade Calculator',
+      type: SourceType.RSS,
+      feedUrl: 'https://dynastytradecalculator.com/feed/',
+      websiteUrl: 'https://dynastytradecalculator.com',
+      description: 'Dynasty Trade Calculator',
+      isActive: true
+    },
+    {
+      name: 'Cheat Sheet War Room',
+      type: SourceType.RSS,
+      feedUrl: 'https://www.cheatsheetwarroom.com/blog/feed',
+      websiteUrl: 'https://www.cheatsheetwarroom.com',
+      description: 'Cheat Sheet War Room',
+      isActive: true
+    },
+    {
+      name: 'The Football Girl',
+      type: SourceType.RSS,
+      feedUrl: 'http://thefootballgirl.com/fantasy/feed/',
+      websiteUrl: 'http://thefootballgirl.com',
+      description: 'Fantasy Archives | The Football Girl',
+      isActive: true
+    },
+    {
+      name: 'Fantasy Fools',
+      type: SourceType.RSS,
+      feedUrl: 'http://fantasy-fools.blogspot.com/feeds/posts/default?alt=rss',
+      websiteUrl: 'http://fantasy-fools.blogspot.com',
+      description: 'Fantasy Fools',
+      isActive: true
+    },
+    {
+      name: 'Fantasy Knuckleheads',
+      type: SourceType.RSS,
+      feedUrl: 'https://fantasyknuckleheads.com/feed/',
+      websiteUrl: 'https://fantasyknuckleheads.com',
+      description: 'Fantasy Knuckleheads',
+      isActive: true
+    },
     
     // === YOUTUBE CHANNELS ===
     {
