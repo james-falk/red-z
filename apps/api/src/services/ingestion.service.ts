@@ -165,15 +165,32 @@ export class IngestionService {
             contentType = ContentType.PODCAST;
           }
 
-          // Extract thumbnail
+          // Extract thumbnail (multiple sources, prioritized)
           let thumbnailUrl = null;
-          if (item.enclosure?.url && item.enclosure.type?.startsWith('image/')) {
+          
+          // 1. YouTube: mediaGroup.media:thumbnail
+          if ((item as any).mediaGroup?.['media:thumbnail']?.[0]?.$?.url) {
+            thumbnailUrl = (item as any).mediaGroup['media:thumbnail'][0].$.url;
+          }
+          // 2. Standard image enclosure
+          else if (item.enclosure?.url && item.enclosure.type?.startsWith('image/')) {
             thumbnailUrl = item.enclosure.url;
-          } else if ((item as any).mediaThumbnail?.$ || (item as any).mediaThumbnail) {
+          }
+          // 3. Media RSS (mediaThumbnail)
+          else if ((item as any).mediaThumbnail) {
             const thumb = (item as any).mediaThumbnail;
             thumbnailUrl = thumb.$?.url || thumb.url || thumb;
-          } else if ((item as any).itunes?.image) {
+          }
+          // 4. iTunes podcast image
+          else if ((item as any).itunes?.image) {
             thumbnailUrl = (item as any).itunes.image;
+          }
+          // 5. Fallback: extract first image from content/description
+          else if (!thumbnailUrl && item.content) {
+            const imgMatch = item.content.match(/<img[^>]+src="([^">]+)"/);
+            if (imgMatch) {
+              thumbnailUrl = imgMatch[1];
+            }
           }
 
           // Create content

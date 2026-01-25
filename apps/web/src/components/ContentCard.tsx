@@ -10,9 +10,22 @@ interface ContentCardProps {
   featured?: boolean;
 }
 
+// Fallback thumbnail URLs based on content type
+const FALLBACK_THUMBNAILS = {
+  VIDEO: 'https://placehold.co/640x360/1e40af/ffffff?text=Video',
+  PODCAST: 'https://placehold.co/640x360/7c3aed/ffffff?text=Podcast',
+  ARTICLE: 'https://placehold.co/640x360/059669/ffffff?text=Article'
+};
+
 export function ContentCard({ content, featured = false }: ContentCardProps) {
   const { data: session } = useSession();
   const [isSaved, setIsSaved] = useState(content.isSaved || false);
+  const [imgError, setImgError] = useState(false);
+
+  // Determine thumbnail to display
+  const thumbnailUrl = content.thumbnailUrl && !imgError 
+    ? content.thumbnailUrl 
+    : FALLBACK_THUMBNAILS[content.type as keyof typeof FALLBACK_THUMBNAILS] || FALLBACK_THUMBNAILS.ARTICLE;
 
   const handleSave = async () => {
     if (!session) return;
@@ -50,15 +63,15 @@ export function ContentCard({ content, featured = false }: ContentCardProps) {
 
   return (
     <div className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow ${featured ? 'border-2 border-primary-500' : 'border border-gray-200'}`}>
-      {content.thumbnailUrl && (
-        <div className="aspect-video w-full overflow-hidden rounded-t-lg">
-          <img
-            src={content.thumbnailUrl}
-            alt={content.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
+      {/* Thumbnail - always show (use fallback if needed) */}
+      <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100">
+        <img
+          src={thumbnailUrl}
+          alt={content.title}
+          className="w-full h-full object-cover"
+          onError={() => setImgError(true)}
+        />
+      </div>
 
       <div className="p-4">
         <div className="flex items-center justify-between mb-2">
