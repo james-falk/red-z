@@ -1,6 +1,18 @@
 import prisma from './client.js';
 import { SourceType, ContentType } from '@fantasy-red-zone/shared';
 
+/**
+ * Generate favicon URL from website URL using Google's service
+ */
+function getFaviconUrl(websiteUrl: string): string {
+  try {
+    const domain = new URL(websiteUrl).hostname;
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+  } catch {
+    return `https://www.google.com/s2/favicons?domain=fantasyfootball.com&sz=64`;
+  }
+}
+
 async function seed() {
   console.log('🌱 Seeding database...');
 
@@ -263,14 +275,21 @@ async function seed() {
 
   for (const sourceData of sources) {
     try {
+      // Auto-generate logoUrl from websiteUrl if not provided
+      const dataWithLogo = {
+        ...sourceData,
+        logoUrl: sourceData.logoUrl || getFaviconUrl(sourceData.websiteUrl)
+      };
+      
       const source = await prisma.source.upsert({
         where: { feedUrl: sourceData.feedUrl },
         update: {
-          name: sourceData.name,
-          description: sourceData.description,
-          isActive: sourceData.isActive
+          name: dataWithLogo.name,
+          description: dataWithLogo.description,
+          logoUrl: dataWithLogo.logoUrl,
+          isActive: dataWithLogo.isActive
         },
-        create: sourceData
+        create: dataWithLogo
       });
       console.log(`  ✓ ${source.name} (${source.type})`);
     } catch (error) {
