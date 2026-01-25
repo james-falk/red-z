@@ -78,13 +78,13 @@ export function ContentCard({ content, featured = false }: ContentCardProps) {
           />
         </div>
       ) : (
-        /* Large Source Logo for Articles (no real thumbnail) */
-        <div className="aspect-video w-full rounded-t-lg bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        /* Large Source Logo for Articles (no real thumbnail) - Shorter height */
+        <div className="w-full h-32 rounded-t-lg bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
           {content.source.logoUrl ? (
             <img
               src={content.source.logoUrl}
               alt={content.source.name}
-              className="w-24 h-24 object-contain opacity-90"
+              className="w-20 h-20 object-contain opacity-90"
             />
           ) : (
             <div className="text-gray-400 text-sm font-medium">
