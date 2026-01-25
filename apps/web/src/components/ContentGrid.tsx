@@ -22,6 +22,11 @@ export function ContentGrid({ endpoint, filters = {} }: ContentGridProps) {
   }, [endpoint, JSON.stringify(filters)]);
 
   const loadContent = async (cursor?: string) => {
+    const startTime = performance.now();
+    const loadType = cursor ? 'Loading more' : 'Loading';
+    
+    console.log(`[ContentGrid] ${loadType} content from ${endpoint}...`);
+    
     try {
       if (cursor) {
         setLoadingMore(true);
@@ -45,8 +50,12 @@ export function ContentGrid({ endpoint, filters = {} }: ContentGridProps) {
 
       setHasMore(data.hasMore);
       setNextCursor(data.nextCursor);
+      
+      const duration = (performance.now() - startTime).toFixed(2);
+      console.log(`[ContentGrid] ✅ Loaded ${data.data.length} items in ${duration}ms`);
     } catch (error) {
-      console.error('Error loading content:', error);
+      const duration = (performance.now() - startTime).toFixed(2);
+      console.error(`[ContentGrid] ❌ Failed to load content after ${duration}ms:`, error);
     } finally {
       setLoading(false);
       setLoadingMore(false);

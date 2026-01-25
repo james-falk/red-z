@@ -51,17 +51,16 @@ app.use('/featured', featuredRoutes);
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`✅ API server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   
-  // Start cron jobs (disable in production if using Render Cron Jobs)
-  // Set DISABLE_CRON=true in production to use external cron service
+  // Start cron jobs (disable with DISABLE_CRON=true)
   if (process.env.NODE_ENV !== 'test' && process.env.DISABLE_CRON !== 'true') {
-    startCronJobs();
-    console.log('📅 Internal cron jobs enabled (set DISABLE_CRON=true to use external cron)');
+    await startCronJobs();
+    console.log('📅 Internal cron enabled (hourly ingestion + daily gap check)');
   } else if (process.env.DISABLE_CRON === 'true') {
-    console.log('⏭️  Internal cron jobs disabled (using external cron service)');
+    console.log('⏭️  Internal cron disabled (DISABLE_CRON=true)');
   }
 });
 

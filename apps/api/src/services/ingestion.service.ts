@@ -15,6 +15,30 @@ const parser = new Parser({
 
 export class IngestionService {
   /**
+   * In-memory lock for single-instance MVP
+   * 
+   * SCALING NOTE: When running multiple instances, replace this with:
+   * 
+   * Option A: Postgres Advisory Lock (recommended, no schema change)
+   * ```
+   * const lockId = 123456; // Unique ID for ingestion job
+   * const acquired = await prisma.$queryRaw`SELECT pg_try_advisory_lock(${lockId})`;
+   * if (!acquired[0].pg_try_advisory_lock) return; // Another instance is running
+   * try {
+   *   // ... ingestion logic ...
+   * } finally {
+   *   await prisma.$queryRaw`SELECT pg_advisory_unlock(${lockId})`;
+   * }
+   * ```
+   * 
+   * Option B: JobLock table (requires migration, easier to debug)
+   * - Create JobLock model with: jobName, lockedAt, lockedUntil
+   * - Acquire lock: upsert with lockedUntil = now + 2 hours
+   * - Release lock: delete row
+   */
+  private static isRunning = false;
+
+  /**
    * Ingest all active sources
    * 
    * OBSERVABILITY:
@@ -22,32 +46,51 @@ export class IngestionService {
    * - Updates lastIngestedAt on success
    * - Stores lastError on failure
    * - Logs summary at the end
+   * 
+   * CONCURRENCY:
+   * - Single-run guard prevents overlap (in-memory flag)
+   * - Logs skip message if already running
    */
   async ingestAllActiveSources(): Promise<void> {
-    const sources = await prisma.source.findMany({
-      where: { isActive: true },
-      orderBy: { name: 'asc' }
-    });
-
-    console.log(`[Ingestion] Starting batch for ${sources.length} active source(s)`);
-    
-    let successCount = 0;
-    let failureCount = 0;
-    let totalItemsIngested = 0;
-
-    for (const source of sources) {
-      try {
-        const itemCount = await this.ingestSource(source.id);
-        successCount++;
-        totalItemsIngested += itemCount;
-      } catch (error) {
-        failureCount++;
-        console.error(`[Ingestion] Failed for source ${source.id} (${source.name}):`, error);
-        // Error is already stored in source.lastError by ingestSource
-      }
+    // Single-run guard
+    if (IngestionService.isRunning) {
+      console.log('[Ingestion] ⏭️  Skipped: already running');
+      return;
     }
 
-    console.log(`[Ingestion] Batch complete: ${successCount} succeeded, ${failureCount} failed, ${totalItemsIngested} total items ingested`);
+    IngestionService.isRunning = true;
+    const startTime = Date.now();
+    
+    try {
+      const sources = await prisma.source.findMany({
+        where: { isActive: true },
+        orderBy: { name: 'asc' }
+      });
+
+      console.log(`[Ingestion] Starting batch for ${sources.length} active source(s)`);
+      
+      let successCount = 0;
+      let failureCount = 0;
+      let totalItemsIngested = 0;
+
+      for (const source of sources) {
+        try {
+          const itemCount = await this.ingestSource(source.id);
+          successCount++;
+          totalItemsIngested += itemCount;
+        } catch (error) {
+          failureCount++;
+          console.error(`[Ingestion] Failed for source ${source.id} (${source.name}):`, error);
+          // Error is already stored in source.lastError by ingestSource
+        }
+      }
+
+      console.log(`[Ingestion] Batch complete: ${successCount} succeeded, ${failureCount} failed, ${totalItemsIngested} total items ingested`);
+    } finally {
+      IngestionService.isRunning = false;
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      console.log(`[Ingestion] ⏱️  Completed in ${duration}s`);
+    }
   }
 
   /**
