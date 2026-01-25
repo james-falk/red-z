@@ -76,10 +76,37 @@ export function ContentCard({ content, featured = false }: ContentCardProps) {
   };
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
+    const now = new Date();
+    const contentDate = new Date(date);
+    const diffInMs = now.getTime() - contentDate.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    // Less than 1 hour
+    if (diffInMinutes < 60) {
+      if (diffInMinutes === 1) return '1 minute ago';
+      if (diffInMinutes < 1) return 'just now';
+      return `${diffInMinutes} minutes ago`;
+    }
+    
+    // Less than 24 hours
+    if (diffInHours < 24) {
+      if (diffInHours === 1) return '1 hour ago';
+      return `${diffInHours} hours ago`;
+    }
+    
+    // Less than 7 days
+    if (diffInDays < 7) {
+      if (diffInDays === 1) return '1 day ago';
+      return `${diffInDays} days ago`;
+    }
+    
+    // 7 days or more - show actual date
+    return contentDate.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric',
+      year: contentDate.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
     });
   };
 
